@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VTuberForge - Admin</title>
-  <link rel="stylesheet" href="css/style.css?v=try-vtuber-v1" />
+  <link rel="stylesheet" href="css/style.css?v=admin-list-v1" />
   <link rel="stylesheet" href="css/app.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -97,15 +97,33 @@
       </div>
     </div>
 
-    <div class="panel-grid section-block">
-      <div class="card panel-card reveal">
-        <h3 data-i18n="adminCurrentLessons">Current lessons</h3>
-        <div id="adminLessonsList" class="panel-list"></div>
+    <div class="admin-library section-block">
+      <div class="card panel-card admin-library-card reveal">
+        <div class="admin-list-head">
+          <div>
+            <h3 data-i18n="adminCurrentLessons">Current lessons</h3>
+            <span class="admin-list-count"><strong id="adminLessonsCount">0</strong></span>
+          </div>
+          <label class="admin-list-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="adminLessonsSearch" type="search" placeholder="Search lessons..." data-admin-filter="lessons" />
+          </label>
+        </div>
+        <div id="adminLessonsList" class="panel-list admin-scroll-list" data-admin-list="lessons"></div>
       </div>
 
-      <div class="card panel-card reveal">
-        <h3 data-i18n="adminCurrentNews">Current news</h3>
-        <div id="adminNewsList" class="panel-list"></div>
+      <div class="card panel-card admin-library-card reveal">
+        <div class="admin-list-head">
+          <div>
+            <h3 data-i18n="adminCurrentNews">Current news</h3>
+            <span class="admin-list-count"><strong id="adminNewsCount">0</strong></span>
+          </div>
+          <label class="admin-list-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="adminNewsSearch" type="search" placeholder="Search news..." data-admin-filter="news" />
+          </label>
+        </div>
+        <div id="adminNewsList" class="panel-list admin-scroll-list" data-admin-list="news"></div>
       </div>
     </div>
   </div>
@@ -125,8 +143,8 @@
   <script src="js/config.js"></script>
   <script src="js/api.js"></script>
   <script src="js/ui.js"></script>
-  <script src="js/i18n.js?v=try-vtuber-v1"></script>
-  <script src="js/lessons.js"></script><script src="js/news.js"></script><script src="js/admin.js"></script><script>initAdmin();</script>
+  <script src="js/i18n.js?v=ux-refresh-v3"></script>
+  <script src="js/lessons.js?v=admin-list-v1"></script><script src="js/news.js?v=admin-list-v1"></script><script src="js/admin.js?v=admin-list-v1"></script><script>initAdmin();</script>
 </body>
 </html>
 

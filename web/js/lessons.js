@@ -6,6 +6,15 @@ function lessonTypeClass(type) {
   return type === "full" ? "full" : "intro";
 }
 
+function escapeLessonHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 // localizeLesson НЕ НУЖНА здесь — используется из i18n.js через window.localizeLesson
 
 let lessonLibrary = [];
@@ -126,14 +135,23 @@ async function loadLessonsAdmin() {
   await ensureLessonsTranslation(data || []);
 
   list.innerHTML = (data || []).map(item => `
-    <div class="panel-item">
-      <div>
+    <div class="panel-item admin-list-item" data-search="${escapeLessonHtml(`${localizeLesson(item).title} ${localizeLesson(item).description} ${lessonTypeLabel(item.lessonType)} #${item.id}`)}">
+      <div class="admin-list-main">
+        <div class="admin-list-meta">
+          <span class="badge ${lessonTypeClass(item.lessonType)}">${lessonTypeLabel(item.lessonType)}</span>
+          <span>#${item.id}</span>
+        </div>
         <strong>${localizeLesson(item).title}</strong>
-        <small>${lessonTypeLabel(item.lessonType)} · ${localizeLesson(item).description}</small>
+        <small>${localizeLesson(item).description}</small>
       </div>
-      <button class="btn btn-danger btn-sm" onclick="deleteLesson(${item.id})">${t("adminDelete")}</button>
+      <div class="panel-actions">
+        <a class="btn btn-secondary btn-sm" href="${item.videoLink}" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+        <button class="btn btn-danger btn-sm" onclick="deleteLesson(${item.id})"><i class="fa-solid fa-trash"></i> ${t("adminDelete")}</button>
+      </div>
     </div>
   `).join("") || `<div class="notice">${t("adminNoLessons")}</div>`;
+  if (typeof updateAdminListCount === "function") updateAdminListCount("lessons", (data || []).length);
+  if (typeof filterAdminList === "function") filterAdminList("lessons");
 
   return data || [];
 }
