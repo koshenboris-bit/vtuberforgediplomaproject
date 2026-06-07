@@ -107,6 +107,7 @@ async function loadLessons() {
   const searchEl = document.getElementById("lessonSearch");
 
   lessonLibrary = lessons;
+  await ensureLessonsTranslation(lessonLibrary);
   renderLessons(lessonLibrary);
 
   if (searchEl && !searchEl.dataset.searchReady) {
@@ -121,6 +122,8 @@ async function loadLessonsAdmin() {
 
   const list = document.getElementById("adminLessonsList");
   if (!list) return data || [];
+
+  await ensureLessonsTranslation(data || []);
 
   list.innerHTML = (data || []).map(item => `
     <div class="panel-item">
@@ -166,6 +169,8 @@ async function deleteLesson(id) {
 }
 
 window.addEventListener("vtuberforge:languagechange", () => {
-  if (document.getElementById("introLessons")) renderLessons(lessonLibrary);
+  if (document.getElementById("introLessons")) {
+    ensureLessonsTranslation(lessonLibrary).then(() => renderLessons(lessonLibrary));
+  }
   if (document.getElementById("adminLessonsList")) loadLessonsAdmin();
 });

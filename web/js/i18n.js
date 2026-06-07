@@ -126,6 +126,61 @@ function localizeLesson(lesson) {
   return { ...lesson, title: current.title || lesson?.title || "", description: current.description || lesson?.description || "" };
 }
 
+function detectTextLanguage(text) {
+  const value = String(text || "");
+  if (/[\u04d8\u04d9\u0492\u0493\u049a\u049b\u04a2\u04a3\u04e8\u04e9\u04b0\u04b1\u04ae\u04af\u04ba\u04bb\u0406\u0456]/.test(value)) return "kk";
+  if (/[\u0400-\u04FF]/.test(value)) return "ru";
+  return "en";
+}
+
+async function translateTextForPage(text, targetLang, sourceLang) {
+  const value = String(text || "").trim();
+  if (!value || targetLang === sourceLang) return value;
+
+  const cacheKey = `vtuberforge-page-translation:${sourceLang}:${targetLang}:${value}`;
+  const cached = localStorage.getItem(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(value)}`;
+    const response = await fetch(url);
+    if (!response.ok) return value;
+    const data = await response.json();
+    const translated = (data?.[0] || []).map(part => part?.[0] || "").join("").trim();
+    const result = translated || value;
+    localStorage.setItem(cacheKey, result);
+    return result;
+  } catch (error) {
+    console.warn("Lesson translation fallback failed", error);
+    return value;
+  }
+}
+
+async function ensureLessonTranslation(lesson, lang = getCurrentLanguage()) {
+  if (!lesson || !["en", "ru", "kk"].includes(lang)) return lesson;
+
+  lesson.translations ||= {};
+  const current = lesson.translations[lang] || {};
+  const titleSourceLang = detectTextLanguage(lesson.title);
+  const descriptionSourceLang = detectTextLanguage(lesson.description);
+  const titleIsUseful = current.title && (lang === titleSourceLang || current.title !== lesson.title);
+  const descriptionIsUseful = current.description && (lang === descriptionSourceLang || current.description !== lesson.description);
+
+  if (titleIsUseful && descriptionIsUseful) return lesson;
+
+  lesson.translations[lang] = {
+    ...current,
+    title: titleIsUseful ? current.title : await translateTextForPage(lesson.title, lang, titleSourceLang),
+    description: descriptionIsUseful ? current.description : await translateTextForPage(lesson.description, lang, descriptionSourceLang),
+  };
+  return lesson;
+}
+
+async function ensureLessonsTranslation(lessons, lang = getCurrentLanguage()) {
+  await Promise.all((lessons || []).map(lesson => ensureLessonTranslation(lesson, lang)));
+  return lessons;
+}
+
 function localizeNews(item) {
   const lang = getCurrentLanguage();
   const current = item?.translations?.[lang] || item?.translations?.en || {};
@@ -137,6 +192,8 @@ window.setLanguage = setLanguage;
 window.getCurrentLanguage = getCurrentLanguage;
 window.localizeLesson = localizeLesson;
 window.localizeNews = localizeNews;
+window.ensureLessonTranslation = ensureLessonTranslation;
+window.ensureLessonsTranslation = ensureLessonsTranslation;
 
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("[data-lang-btn]").forEach((button) => {
