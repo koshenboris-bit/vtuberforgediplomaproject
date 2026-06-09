@@ -32,12 +32,12 @@ function renderNewsActions(item) {
   `;
 }
 
-function renderNewsCard(item, index, featured = false) {
+function renderNewsCard(item, index) {
   const view = localizeNews(item);
   return `
-    <article class="news-card ${featured ? "news-card-featured" : ""} glass reveal" data-news-id="${item.id}">
+    <article class="news-card glass reveal" data-news-id="${item.id}">
       <div class="news-card-content">
-        <span class="news-date">${featured ? t("featuredUpdate") : `${t("newsUpdate")} ${index + 1}`}</span>
+        <span class="news-date">${t("newsUpdate")} ${index + 1}</span>
         <h3>${escapeHtml(view.title)}</h3>
         <p>${escapeHtml(view.content)}</p>
         <div class="news-footer">
@@ -117,22 +117,13 @@ async function loadNews() {
   const news = Array.isArray(data) ? data : [];
   window._newsCache = news;
 
-  const featured = document.getElementById("featuredNews");
   const list = document.getElementById("newsList");
   const adminList = document.getElementById("adminNewsList");
 
-  if (featured) {
-    featured.className = "news-featured-wrap";
-    featured.innerHTML = news[0]
-      ? renderNewsCard(news[0], 0, true)
-      : `<div class="notice">${t("noNews")}</div>`;
-  }
-
   if (list) {
-    const items = news.slice(1);
-    list.innerHTML = items.length
-      ? items.map((item, index) => renderNewsCard(item, index + 1)).join("")
-      : `<div class="notice">${t("noMoreNews")}</div>`;
+    list.innerHTML = news.length
+      ? news.map((item, index) => renderNewsCard(item, index)).join("")
+      : `<div class="notice">${t("noNews")}</div>`;
   }
 
   if (adminList) {
@@ -212,5 +203,5 @@ async function deleteNews(id) {
 }
 
 window.addEventListener("vtuberforge:languagechange", () => {
-  if (document.getElementById("featuredNews") || document.getElementById("newsList") || document.getElementById("adminNewsList")) loadNews();
+  if (document.getElementById("newsList") || document.getElementById("adminNewsList")) loadNews();
 });

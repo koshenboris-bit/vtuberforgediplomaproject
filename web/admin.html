@@ -104,6 +104,9 @@
             <h3 data-i18n="adminCurrentLessons">Current lessons</h3>
             <span class="admin-list-count"><strong id="adminLessonsCount">0</strong></span>
           </div>
+          <button class="admin-collapse-btn" type="button" data-admin-toggle="lessons" onclick="toggleAdminListCollapse('lessons')" aria-label="Show all lessons">
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
           <label class="admin-list-search">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input id="adminLessonsSearch" type="search" placeholder="Search lessons..." data-admin-filter="lessons" />
@@ -118,6 +121,9 @@
             <h3 data-i18n="adminCurrentNews">Current news</h3>
             <span class="admin-list-count"><strong id="adminNewsCount">0</strong></span>
           </div>
+          <button class="admin-collapse-btn" type="button" data-admin-toggle="news" onclick="toggleAdminListCollapse('news')" aria-label="Show all news">
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
           <label class="admin-list-search">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input id="adminNewsSearch" type="search" placeholder="Search news..." data-admin-filter="news" />

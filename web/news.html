@@ -12,14 +12,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <style>
-    /* Убираем hero-стиль у первой новости, все карточки одинаковые */
-    #featuredNews {
-      all: unset;
-      display: contents;
+    #newsList {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
     }
-    /* Если news.js вешает hero-класс — сбрасываем */
-    .news-hero {
-      all: unset !important;
+    .news-card-featured {
+      all: unset;
     }
   </style>
 </head>
@@ -80,10 +79,7 @@
         <h1 class="section-title reveal" data-i18n="newsTitle">VNews</h1>
         <p class="section-sub reveal" data-i18n="newsText">Interesting news.</p>
 
-        <div class="news-grid">
-          <div id="featuredNews"></div>
-          <div id="newsList"></div>
-        </div>
+        <div id="newsList"></div>
       </div>
     </section>
 
